@@ -1,11 +1,14 @@
 package com.apress.gerber.currencies;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -17,6 +20,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -226,6 +232,69 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     public void onNothingSelected(AdapterView<?> parent) {
         //stb - never called
 
+
+    }
+
+    private class CurrencyConverterTask extends AsyncTask<String, Void, JSONObject>{
+
+        private ProgressDialog progressDialog;
+
+        //1
+        @Override
+        protected void onPreExecute() {
+            // super.onPreExecute();
+
+
+            progressDialog = new ProgressDialog(MainActivity.this);
+            // We need more here....
+
+            progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener(){
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    CurrencyConverterTask.this.cancel(true);
+                    progressDialog.dismiss();
+
+                }
+            });
+
+
+
+            progressDialog.show();
+        }
+
+        //2
+        @Override
+        protected JSONObject doInBackground(String... params) {
+            return new JSONParser().getJSONFromUrl(params[0]);
+        }
+
+        //3
+        @Override
+        protected void onPostExecute(JSONObject jsonObject) {
+            // super.onPostExecute(jsonObject);
+
+            double dCalculated = 0.0;
+            // String strForCode = // extractCodeFromCurrency()......
+
+
+            String strAmount = mAmountEditText.getText().toString();
+
+            try {
+
+                if (jsonObject == null){
+                    throw new JSONException("no data available");
+                }
+
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        
 
     }
 
