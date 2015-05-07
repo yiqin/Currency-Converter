@@ -8,6 +8,8 @@
         app:showAsAction="never"
         android:title="search active codes"/>
 
+    <!-- always or never -->
+
     <item
         android:id="@+id/mnu_invert"
         android:orderInCategory="200"

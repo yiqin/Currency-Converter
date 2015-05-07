@@ -39,8 +39,12 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         //unpack ArrayList from the bundle and convert to array
         ArrayList<String> arrayList = ((ArrayList<String>)
                 getIntent().getSerializableExtra(SplashActivity.KEY_ARRAYLIST));
+        //if there is not an intent from SplashActivity, then it's null.
+
+        //sort the arrayList...
         Collections.sort(arrayList);
         mCurrencies = arrayList.toArray(new String[arrayList.size()]);
+
 
         //assign references to our Views
         mConvertedTextView = (TextView) findViewById(R.id.txt_converted);
@@ -48,6 +52,8 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         mCalcButton = (Button) findViewById(R.id.btn_calc);
         mForSpinner = (Spinner) findViewById(R.id.spn_for);
         mHomSpinner = (Spinner) findViewById(R.id.spn_hom);
+
+
         //controller: mediates model and view
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
 
@@ -63,12 +69,17 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         arrayAdapter.setDropDownViewResource(
                 android.R.layout.simple_spinner_dropdown_item);
 
+
+
         //assign adapters to spinners
         mHomSpinner.setAdapter(arrayAdapter);
         mForSpinner.setAdapter(arrayAdapter);
 
+
+
         mHomSpinner.setOnItemSelectedListener(this);
         mForSpinner.setOnItemSelectedListener(this);
+
 
 
     }
@@ -104,6 +115,9 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         return true;
     }
 
+
+
+    //android stack
     public boolean isOnline() {
         ConnectivityManager cm =
                 (ConnectivityManager)
@@ -113,31 +127,28 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
             return true;
         }
         return false;
-
     }
 
-    private void launchBrowser(String strUri) {
 
+    private void launchBrowser(String strUri) {
         if (isOnline()) {
             Uri uri = Uri.parse(strUri);
             //call an implicit intent
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             startActivity(intent);
-
         }
     }
+
 
     private void invertCurrencies() {
         int nFor = mForSpinner.getSelectedItemPosition();
         int nHom = mHomSpinner.getSelectedItemPosition();
-
         mForSpinner.setSelection(nHom);
         mHomSpinner.setSelection(nFor);
-
         mConvertedTextView.setText("");
-
-
     }
+
+
 
 
     @Override
@@ -146,21 +157,26 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         switch (parent.getId()) {
 
             case R.id.spn_for:
-                //define behavior here
+                //TODO define behavior here
                 break;
 
             case R.id.spn_hom:
-                //define behavior here
+                //TODO define behavior here
                 break;
 
             default:
                 break;
+
         }
 
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
+        //stb - never called
+
 
     }
+
+
 }
