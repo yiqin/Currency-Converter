@@ -2,6 +2,7 @@ package com.apress.gerber.currencies;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -17,8 +18,12 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Properties;
 
 
 public class MainActivity extends ActionBarActivity implements AdapterView.OnItemSelectedListener {
@@ -29,6 +34,21 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     private EditText mAmountEditText;
     private Spinner mForSpinner, mHomSpinner;
     private String[] mCurrencies;
+
+
+    public static final String FOR = "FOR";
+    public static final String Hom = "HOM";
+
+
+
+    private String mKey;
+    public static final String RATES = "rates";
+    public static final String URL_BASE = "http://openexchangerates.org/api/latest.json?app_id=";
+
+
+    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#,##0.00000");
+
+
 
 
     @Override
@@ -81,7 +101,35 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         mForSpinner.setOnItemSelectedListener(this);
 
 
+        // Something is required here
+        mCalcButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //todo for later
 
+            }
+        });
+
+        mKey = getKey("open_key");
+
+
+
+    }//end onCreate()
+
+
+
+    private String getKey(String strKey) throws IOException {
+        AssetManager assetManager = this.getResources().getAssets();
+        Properties properties = new Properties();
+
+        //we need to check everytime we use input stream
+        try {
+            InputStream inputStream = assetManager.open("open_key");
+            properties.load(inputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return properties.getProperty(strKey);
     }
 
 
@@ -158,16 +206,19 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
 
             case R.id.spn_for:
                 //TODO define behavior here
+                // PrefsMgr.setString(this, FOR, extractCodeFromCurency((String)mForSpinner.getSelectedItem());
                 break;
 
             case R.id.spn_hom:
                 //TODO define behavior here
+                // PrefsMgr.setString(this, HOM, extractCodeFromCurency((String)mHomSpinner.getSelectedItem());
                 break;
 
             default:
                 break;
 
         }
+        mConvertedTextView.setText("");
 
     }
 
