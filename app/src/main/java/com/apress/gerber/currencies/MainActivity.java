@@ -1,6 +1,5 @@
 package com.apress.gerber.currencies;
 
-import android.app.Presentation;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -28,6 +27,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,6 +61,13 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setIcon(R.mipmap.ic_launcher);
+
 
         //unpack ArrayList from the bundle and convert to array
         ArrayList<String> arrayList = ((ArrayList<String>)
@@ -126,8 +133,8 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         mCalcButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //todo for later
-
+                //Fire the new CurrencyConverterTask in the mCalcButton onClick method
+                new CurrencyConverterTask().execute( URL_BASE + mKey );
             }
         });
 
