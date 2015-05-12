@@ -47,6 +47,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
 
 
 
+
     private String mKey;
     public static final String RATES = "rates";
     public static final String URL_BASE = "http://openexchangerates.org/api/latest.json?app_id=";
@@ -204,7 +205,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
 
 
 
-
+    // Delegates handling of spinners' behavior to MainActivity...
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
