@@ -47,16 +47,13 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     public static final String HOM = "HOM_CURRENCY";
 
 
-
-
+    //this will contain my developers key
     private String mKey;
+    //used to fetch the 'rates' json object from openexchangerates.org
     public static final String RATES = "rates";
     public static final String URL_BASE = "http://openexchangerates.org/api/latest.json?app_id=";
-
-
+    //used to format data from openexchangerates.org
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#,##0.00000");
-
-
 
 
     @Override
@@ -124,11 +121,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
             mHomSpinner.setSelection(findPositionGivenCode(PrefsMgr.getString(this, HOM), mCurrencies));
         }
 
-
-
-
-
-        // Something is required here
+        //Button click behavior
         mCalcButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -137,15 +130,19 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
             }
         });
 
-        // mKey = getKey("open_key");
+        mKey = getKey("open_key");
 
 
 
     }//end onCreate()
 
 
+    //TODO - note
+    //File I/O is an expensive operation. The getKey() method we defined in the previous step
+    //contains such an operation and so we'd like to call getKey() as seldom as possible.
 
-    private String getKey(String strKey) throws IOException {
+    // Fetch the Developer Key
+    private String getKey(String strKey) {
         AssetManager assetManager = this.getResources().getAssets();
         Properties properties = new Properties();
 
@@ -153,13 +150,13 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         try {
             InputStream inputStream = assetManager.open("open_key");
             properties.load(inputStream);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
         return properties.getProperty(strKey);
     }
-
-
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -246,7 +243,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
 
     }
 
-    
+
 
     // Delegates handling of spinners' behavior to MainActivity...
     @Override
