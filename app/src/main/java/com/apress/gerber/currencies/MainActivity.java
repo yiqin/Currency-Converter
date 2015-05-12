@@ -168,15 +168,32 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         }
 
         return true;
+    }// end onOptionsItemSelected
+
+
+    //Creates find position given code method
+    private int findPositionGivenCode(String code, String[] currencies) {
+
+        for (int i = 0; i<currencies.length; i++) {
+            if (extractCodeFromCurrency (currencies[i]).equalsIgnoreCase(code)) {
+                return 1;
+            }
+        }
+        //default
+        return 0;
     }
+
+    //Extract code from Currency
+    private String extractCodeFromCurrency(String currency) {
+        return (currency).substring(0, 3);
+    }
+
 
 
 
     //android stack
     public boolean isOnline() {
-        ConnectivityManager cm =
-                (ConnectivityManager)
-                        getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = cm.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnectedOrConnecting()) {
             return true;
@@ -229,12 +246,15 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
 
     }
 
+
+
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
         //stb - never called
 
-
     }
+
+
 
     private class CurrencyConverterTask extends AsyncTask<String, Void, JSONObject>{
 
@@ -297,7 +317,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
 
         
 
-    }
+    }// end CurrencyConverterTask
 
 
 }
