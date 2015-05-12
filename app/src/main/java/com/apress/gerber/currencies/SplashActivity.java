@@ -33,8 +33,11 @@ public class SplashActivity extends Activity {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_splash);
         new FetchCodesTask().execute(URL_CODES);
+
+
     }
 
+    // Fetching Active Currency Codes as JSON
     private class FetchCodesTask extends AsyncTask<String, Void, JSONObject> {
 
         @Override
@@ -57,6 +60,8 @@ public class SplashActivity extends Activity {
                     key = (String)iterator.next();
                     mCurrencies.add(key + " | " + jsonObject.getString(key));
                 }
+
+                // Fires-up MainActivity with Intent and passes ArrayList into Bundle
                 Intent mainIntent = new Intent(SplashActivity.this, MainActivity.class);
                 mainIntent.putExtra(KEY_ARRAYLIST, mCurrencies);
                 startActivity(mainIntent);
@@ -76,7 +81,7 @@ public class SplashActivity extends Activity {
 
             }
 
-        }
+        } // end onPostExecute
     }
 
 

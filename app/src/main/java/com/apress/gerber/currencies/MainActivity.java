@@ -116,7 +116,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
             }
         });
 
-        mKey = getKey("open_key");
+        // mKey = getKey("open_key");
 
 
 
