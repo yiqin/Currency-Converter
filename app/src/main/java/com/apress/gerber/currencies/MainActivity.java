@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -156,13 +157,15 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         }
         return properties.getProperty(strKey);
     }
-    
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -276,19 +279,19 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     }
 
 
-
+    //The UI thread is sometimes referred to as the main thread.
     private class CurrencyConverterTask extends AsyncTask<String, Void, JSONObject>{
 
         private ProgressDialog progressDialog;
 
-        //1
+        //1 is excuted on the UI thread just prior to firing the doInBackground()
         @Override
         protected void onPreExecute() {
             // super.onPreExecute();
-
-
             progressDialog = new ProgressDialog(MainActivity.this);
-            // We need more here....
+            progressDialog.setTitle("Calculating Result...");
+            progressDialog.setMessage("One moment please...");
+            progressDialog.setCancelable(true);
 
             progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener(){
 
@@ -300,45 +303,56 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
 
                 }
             });
-
-
-
             progressDialog.show();
         }
 
-        //2
+        //2 a proxy for the execute() method fo AsyncTask
         @Override
         protected JSONObject doInBackground(String... params) {
             return new JSONParser().getJSONFromUrl(params[0]);
         }
 
-        //3
+        //3 is running on the UI thread
         @Override
         protected void onPostExecute(JSONObject jsonObject) {
             // super.onPostExecute(jsonObject);
 
             double dCalculated = 0.0;
-            // String strForCode = // extractCodeFromCurrency()......
-
-
+            String strForCode = extractCodeFromCurrency(mCurrencies[mForSpinner.getSelectedItemPosition()]);
+            String strHomCode = extractCodeFromCurrency(mCurrencies[mHomSpinner.getSelectedItemPosition()]);
             String strAmount = mAmountEditText.getText().toString();
 
             try {
-
                 if (jsonObject == null){
                     throw new JSONException("no data available");
                 }
-
-
+                JSONObject jsonRates = jsonObject.getJSONObject(RATES);
+                if (strHomCode.equalsIgnoreCase("USD")) {
+                    dCalculated = Double.parseDouble(strAmount) / jsonRates.getDouble(strForCode);
+                }
+                else if (strForCode.equalsIgnoreCase("USD")) {
+                    dCalculated = Double.parseDouble(strAmount) * jsonRates.getDouble(strHomCode);
+                }
+                else {
+                    dCalculated = Double.parseDouble(strAmount) * jsonRates.getDouble(strHomCode) / jsonRates.getDouble(strForCode);
+                }
 
             } catch (JSONException e) {
+                Toast.makeText(
+                        MainActivity.this,
+                        "There's been a JSON exceptiopn: "+e.getMessage(),
+                        Toast.LENGTH_LONG
+                ).show();
+                mConvertedTextView.setText("");
+
                 e.printStackTrace();
             }
+
+            mConvertedTextView.setText(DECIMAL_FORMAT.format(dCalculated)+" "+strHomCode);
+            progressDialog.dismiss();
+
         }
-
-        
-
     }// end CurrencyConverterTask
 
 
-}
+}//end MainActivity
