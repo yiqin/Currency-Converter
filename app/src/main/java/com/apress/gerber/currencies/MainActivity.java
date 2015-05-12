@@ -1,5 +1,6 @@
 package com.apress.gerber.currencies;
 
+import android.app.Presentation;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -42,8 +43,8 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     private String[] mCurrencies;
 
 
-    public static final String FOR = "FOR";
-    public static final String Hom = "HOM";
+    public static final String FOR = "FOR_CURRENCY";
+    public static final String HOM = "HOM_CURRENCY";
 
 
 
@@ -106,6 +107,25 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
 
         mHomSpinner.setOnItemSelectedListener(this);
         mForSpinner.setOnItemSelectedListener(this);
+
+
+
+        //set to shared-preferences or pull from shared-preferences on restart
+        if (savedInstanceState == null && (PrefsMgr.getString(this, FOR) == null && PrefsMgr.getString(this, HOM) == null)){
+            mForSpinner.setSelection(findPositionGivenCode("CNY", mCurrencies));
+            mHomSpinner.setSelection(findPositionGivenCode("USD", mCurrencies));
+
+            PrefsMgr.setString(this, FOR, "CNY");
+            PrefsMgr.setString(this, HOM, "USD");
+
+        }
+        else {
+            mForSpinner.setSelection(findPositionGivenCode(PrefsMgr.getString(this, FOR), mCurrencies));
+            mHomSpinner.setSelection(findPositionGivenCode(PrefsMgr.getString(this, HOM), mCurrencies));
+        }
+
+
+
 
 
         // Something is required here
@@ -175,7 +195,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     private int findPositionGivenCode(String code, String[] currencies) {
 
         for (int i = 0; i<currencies.length; i++) {
-            if (extractCodeFromCurrency (currencies[i]).equalsIgnoreCase(code)) {
+            if (extractCodeFromCurrency(currencies[i]).equalsIgnoreCase(code)) {
                 return 1;
             }
         }
@@ -217,10 +237,16 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         int nHom = mHomSpinner.getSelectedItemPosition();
         mForSpinner.setSelection(nHom);
         mHomSpinner.setSelection(nFor);
+
         mConvertedTextView.setText("");
+
+
+        PrefsMgr.setString(this, FOR, extractCodeFromCurrency((String) mForSpinner.getSelectedItem()));
+        PrefsMgr.setString(this, HOM, extractCodeFromCurrency((String) mHomSpinner.getSelectedItem()));
+
     }
 
-
+    
 
     // Delegates handling of spinners' behavior to MainActivity...
     @Override
@@ -229,13 +255,11 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         switch (parent.getId()) {
 
             case R.id.spn_for:
-                //TODO define behavior here
-                // PrefsMgr.setString(this, FOR, extractCodeFromCurency((String)mForSpinner.getSelectedItem());
+                PrefsMgr.setString(this, FOR, extractCodeFromCurrency((String) mForSpinner.getSelectedItem()));
                 break;
 
             case R.id.spn_hom:
-                //TODO define behavior here
-                // PrefsMgr.setString(this, HOM, extractCodeFromCurency((String)mHomSpinner.getSelectedItem());
+                PrefsMgr.setString(this, HOM, extractCodeFromCurrency((String) mHomSpinner.getSelectedItem()));
                 break;
 
             default:
