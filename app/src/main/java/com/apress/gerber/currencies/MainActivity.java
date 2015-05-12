@@ -150,19 +150,19 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     //contains such an operation and so we'd like to call getKey() as seldom as possible.
 
     // Fetch the Developer Key
-    private String getKey(String strKey) {
+    private String getKey(String keyName) {
         AssetManager assetManager = this.getResources().getAssets();
         Properties properties = new Properties();
 
         //we need to check everytime we use input stream
         try {
-            InputStream inputStream = assetManager.open("open_key");
+            InputStream inputStream = assetManager.open("keys.properties");
             properties.load(inputStream);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return properties.getProperty(strKey);
+        return properties.getProperty(keyName);
     }
 
 
@@ -327,10 +327,14 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
             String strHomCode = extractCodeFromCurrency(mCurrencies[mHomSpinner.getSelectedItemPosition()]);
             String strAmount = mAmountEditText.getText().toString();
 
+
             try {
                 if (jsonObject == null){
                     throw new JSONException("no data available");
                 }
+
+
+
                 JSONObject jsonRates = jsonObject.getJSONObject(RATES);
                 if (strHomCode.equalsIgnoreCase("USD")) {
                     dCalculated = Double.parseDouble(strAmount) / jsonRates.getDouble(strForCode);
