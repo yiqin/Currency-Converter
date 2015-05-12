@@ -203,7 +203,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
 
         for (int i = 0; i<currencies.length; i++) {
             if (extractCodeFromCurrency(currencies[i]).equalsIgnoreCase(code)) {
-                return 1;
+                return i;
             }
         }
         //default
@@ -214,8 +214,6 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     private String extractCodeFromCurrency(String currency) {
         return (currency).substring(0, 3);
     }
-
-
 
 
     //android stack
@@ -350,8 +348,8 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
                         "There's been a JSON exceptiopn: "+e.getMessage(),
                         Toast.LENGTH_LONG
                 ).show();
-                mConvertedTextView.setText("");
 
+                mConvertedTextView.setText("");
                 e.printStackTrace();
             }
 
