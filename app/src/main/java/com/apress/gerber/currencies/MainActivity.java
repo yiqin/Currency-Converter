@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -133,23 +134,20 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         mCalcButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // The first thing to do is to hide the keyboard
+                hideKeyboard();
                 //Fire the new CurrencyConverterTask in the mCalcButton onClick method
                 new CurrencyConverterTask().execute( URL_BASE + mKey );
             }
         });
 
         mKey = getKey("open_key");
-
-
-
     }//end onCreate()
 
 
-    //TODO - note
     //File I/O is an expensive operation. The getKey() method we defined in the previous step
     //contains such an operation and so we'd like to call getKey() as seldom as possible.
-
-    // Fetch the Developer Key
+    //Fetch the Developer Key
     private String getKey(String keyName) {
         AssetManager assetManager = this.getResources().getAssets();
         Properties properties = new Properties();
@@ -252,7 +250,6 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     }
 
 
-
     // Delegates handling of spinners' behavior to MainActivity...
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -274,7 +271,6 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         mConvertedTextView.setText("");
 
     }
-
 
 
     @Override
@@ -299,13 +295,10 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
             progressDialog.setCancelable(true);
 
             progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener(){
-
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-
                     CurrencyConverterTask.this.cancel(true);
                     progressDialog.dismiss();
-
                 }
             });
             progressDialog.show();
@@ -321,10 +314,21 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         @Override
         protected void onPostExecute(JSONObject jsonObject) {
             // super.onPostExecute(jsonObject);
-
             double dCalculated = 0.0;
             String strForCode = extractCodeFromCurrency(mCurrencies[mForSpinner.getSelectedItemPosition()]);
             String strHomCode = extractCodeFromCurrency(mCurrencies[mHomSpinner.getSelectedItemPosition()]);
+
+
+            // This is the corner case that will cause the app to crash.
+            if( mAmountEditText.getText().length() <= 0 ) {
+                Toast.makeText(
+                        MainActivity.this,
+                        "Empty input. Please type the amount.",
+                        Toast.LENGTH_LONG
+                ).show();
+                progressDialog.dismiss();
+                return;
+            }
             String strAmount = mAmountEditText.getText().toString();
 
 
@@ -332,8 +336,6 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
                 if (jsonObject == null){
                     throw new JSONException("no data available");
                 }
-
-
 
                 JSONObject jsonRates = jsonObject.getJSONObject(RATES);
                 if (strHomCode.equalsIgnoreCase("USD")) {
@@ -357,11 +359,19 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
                 e.printStackTrace();
             }
 
-            mConvertedTextView.setText(DECIMAL_FORMAT.format(dCalculated)+" "+strHomCode);
+            mConvertedTextView.setText(DECIMAL_FORMAT.format(dCalculated) +" "+strHomCode);
             progressDialog.dismiss();
-
         }
     }// end CurrencyConverterTask
 
+
+    private void hideKeyboard() {
+        // Check if no view has focus:
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager inputManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+    }
 
 }//end MainActivity
