@@ -294,14 +294,17 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
             progressDialog.setMessage("One moment please...");
             progressDialog.setCancelable(true);
 
-            progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener(){
+            progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     CurrencyConverterTask.this.cancel(true);
                     progressDialog.dismiss();
                 }
             });
-            progressDialog.show();
+
+            if( mAmountEditText.getText().length() > 0 ) {
+                progressDialog.show();
+            }
         }
 
         //2 a proxy for the execute() method fo AsyncTask
